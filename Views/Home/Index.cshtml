@@ -1,0 +1,36 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4"><a href="http://www.jetec.com.tw/">久德</a>雲管理系統</h1>
+	@if(User.Identity.IsAuthenticated)
+	{
+    <p>請登入或<a  asp-area="" asp-controller="User" asp-action="Register">註冊</a>帳號</p>
+	}
+</div>
+<div align="right">
+<table>
+    
+ <tr>
+   	    <td><span class="body1">歡迎透過以下聯絡資訊與我們，將有專人為您處理</span></td>
+      </tr>
+   	  <tr>
+   	    <td>&nbsp;</td>
+      </tr>
+   	  <tr>
+   	    <td align="center" valign="top"><table width="769" height="141" border="0" align="center" cellpadding="0" cellspacing="10">
+   	      <tr>
+   	        <td width="689" height="18" align="left" class="Product_Title1">聯絡資訊</td>
+   	        </tr>
+   	      <tr>
+   	        <td width="689" height="75" align="left"><span class="model1">地址：(403011)台中市西區福人街13號<br />
+   	          電話： <a href="tel:+886423729418" target="_blank">+886-4-23729418</a> <br />
+   	          傳真： +886-4-23724011<br />
+   	          E-mail：<a href="mailto:sales@jetec.com.tw">sales@jetec.com.tw</a> (銷售/業務部 ) </span><br />
+   	          <span class="model1">LINE官方帳號：<a href="../JETEC_LINE.html">tub4224p</a></span></td>
+ 	        </tr>
+   	      </table></td>
+			 </tr>
+</table>
+</div>

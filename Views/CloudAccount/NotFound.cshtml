@@ -1,0 +1,15 @@
+﻿@model ErrorViewModel
+@{
+    ViewData["Title"] = "NotFound";
+}
+@* <div style="align-items: center;"class="text-center"> *@
+    <div style="width: 80%;" class="alert alert-danger mt-1 mb-1 text-center">
+        <h4>查無資料</h4>
+        <hr>
+        <h5>
+            查詢不到企業ID為 @ViewBag.ErroMessage 的訊息
+        </h5>
+
+        
+    </div>
+<a asp-controller="CloudAccount" asp-action="Master" class="btn btn-outline-success" style="width:auto">返回雲端帳號列表</a>

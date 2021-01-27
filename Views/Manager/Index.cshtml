@@ -1,0 +1,174 @@
+﻿@using BkServer.ViewModels
+@model BkServer.ViewModels.ManagerVM
+ 
+@{
+    ViewData["Title"] = "Home Page";    
+}
+<script>    
+function print_value(usertype,proxycom) {	
+	var isproxy = document.getElementById(usertype).value==1;
+    if(isproxy)
+    {
+        document.getElementById(proxycom).style.visibility="visible";
+        document.getElementById(proxycom).style.width="150";
+    }else 
+    {
+         document.getElementById(proxycom).style.visibility="hidden";
+         document.getElementById(proxycom).style.width="100";
+    }
+}
+</script>
+<div>
+    <h2>待開通帳號<p id="result"></p></h2>
+    <table class="table table-bordered table-striped">
+        <thread>
+            <tr>
+                <th scope="col">帳號</th>
+                <th scope="col">姓名</th>
+                <th scope="col">電子郵件</th>
+                <th scope="col">公司</th>                
+                <th scope="col">信箱驗證</th>
+                <th scope="col">開通</th>
+                
+            </tr>
+        </thread>
+        <tbody>
+            @foreach (var reguser in Model.regusers)
+            {
+              
+                <tr>
+                     
+                    <th scope="row">@reguser.UserId</th>
+                    <td>@reguser.UserName</td>
+                    <td>@reguser.Email</td>
+                    <td>@reguser.Usergroup</td> 
+                    @{var textcolor =reguser.EmailCertify?"primary":"danger";}                  
+                    <td class="text-@textcolor"> @{var certify=reguser.EmailCertify?"已驗證":"未通過";}@certify</td> 
+                    
+                    <td >
+                       <div class="flex-row d-flex">
+                        <form method="POST"asp-controller="Manager"  asp-action="open">
+                       
+                        <span>  
+                            <select id="@reguser.UserId type" style="width: 100px;" asp-for="userTypeenum" class="custom-select mr-sm-1 btn-sm" asp-items="Html.GetEnumSelectList<UserTypeEnum>()" onchange="print_value('@reguser.UserId type','@reguser.UserId proxy');"></select>
+                            <select id="@reguser.UserId proxy" style="width: 150px;visibility: hidden;"asp-for="proxyId"  class="custom-select mr-sm-1 btn-sm" asp-items="Model.proxycom"></select>
+                            <input type="hidden" id="id" name="id" value="@reguser.UserId"/>
+                         <button style="margin-right: 20px;" type="submit" asp-for=""   onclick="return confirm('確定開通嗎?')" class="btn btn-primary">開通</button>
+                        </span>
+                        </form>
+                        
+                        <button asp-controller="Manager" asp-action="DeleteReguser"  asp-route-id="@reguser.UserId"  class="btn btn-danger"onclick="return confirm('確定要刪除嗎?')">刪除</button>
+                        
+                         </div>
+                    </td>
+                    
+                </tr>
+                
+            }
+        </tbody>
+    </table>
+    <h2>現有人員</h2>
+     <form asp-action="Index"   method="get">
+            <div class="form-actions no-color">
+                <input type="hidden" name="CurrentPage"value="@Model.users.CurrentPage" />
+                <input type="hidden" name="Sorting"value="@Model.users.Sorting" />
+                <p>                    
+                    <input type="text" name="FilterText"value="@Model.users.FilterText"/>
+                    <input type="submit" name="Sorting"value="查詢"/>
+                    <a asp-action="Index">返回所有列表</a>
+                </p>
+            </div>
+        </form>
+    <table class="table table-bordered table-striped">
+        <thread>
+            <tr>
+                @{
+                    var sortId=ViewBag.sortId==null?"UserId":ViewBag.sortId;
+                    var sortgroup=ViewBag.sortgroup==null?"group":ViewBag.sortgroup;
+                    var sorttype=ViewBag.sorttype==null?"type":ViewBag.sorttype;
+                }
+                <th scope="col"><a asp-action="Index" asp-route-sortby="@sortId" >帳號</a></th>               
+                <th scope="col">姓名</th>
+                <th scope="col">電子郵件</th>
+                <th scope="col"><a asp-action="Index" asp-route-sortby="@sortgroup" >公司</a></th>  
+                <th scope="col"><a asp-action="Index" asp-route-sortby="@sorttype" >操作</a></th>
+                
+            </tr>
+        </thread>
+        <tbody>            
+            @foreach (var user in Model.users.Data)
+            {              
+                <tr>                     
+                    <th scope="row">@user.UserId</th>
+                    <td>@user.UserName</td>
+                    <td>@user.Email</td>
+                    <td>@user.Usergroup</td>                   
+                    
+                    <td >
+                       <div class="flex-row d-flex">
+                        <form method="POST" asp-action="edit">
+                       
+                        <span>  
+                            <select asp-for="@user.UserType"name="types" id="@user.UserId type" style="width: 100px;" class="custom-select mr-sm-1 btn-sm" asp-items="Html.GetEnumSelectList<UserTypeEnum>()" onchange="print_value('@user.UserId type','@user.UserId proxy');">
+                              
+                            </select> 
+                            
+                            <select style="width: 100px;visibility: hidden;"asp-for="proxyId" id="@user.UserId proxy"  class="custom-select mr-sm-1 btn-sm" asp-items="Model.proxycom"></select>   
+
+                            
+                            <input type="hidden" id="id" name="id" value="@user.UserId"/>
+                         <button style="margin-right: 20px;" type="submit" asp-for=""   onclick="return confirm('確定修改嗎?')" class="btn btn-primary">修改權限</button>
+                        </span>
+                        </form>
+                        <form method="POST"asp-controller="Manager"  asp-action="DeleteUser">
+                        <button asp-controller="Manager" asp-action="DeleteUser" asp-route-id="@user.UserId" class="btn btn-danger"onclick="return confirm('確定要刪除嗎?')">刪除</button>
+                        </form>
+                         </div>
+                    </td>
+                    
+                </tr>
+                
+            }
+        </tbody>
+    </table>
+</div>
+
+
+@* 分頁區 *@
+    <div>
+        <ul class="pagination">
+            <li class='page-item @(!Model.users.ShowFirst?"disabled":"")'>
+                <a asp-route-CurrentPage="1" asp-route-FilterText="@Model.users.FilterText" asp-route-Sorting="@Model.users.Sorting"class="page-link">
+                    <i class="fa fa-fast-backward"></i>
+                </a>
+            </li>
+            <li class='page-item @(!Model.users.ShowPrevious?"disabled":"")'>
+                <a asp-route-CurrentPage="@(Model.users.CurrentPage-1)" asp-route-FilterText="@Model.users.FilterText" asp-route-Sorting="@Model.users.Sorting" class="page-link">
+                    <i class="fa fa-step-backward"></i>
+                </a>
+
+            </li>
+            @for (var i = 1; i <= Model.users.TotalPages; i++)
+            {
+                <li class='page-item @(i==Model.users.CurrentPage?"active":"")'>
+                    <a asp-route-CurrentPage="@i" asp-route-FilterText="@Model.users.FilterText" asp-route-Sorting="@Model.users.Sorting" class="page-link">@i</a>
+                </li>
+            }
+            <li class='page-item @(!Model.users.ShowNext?"disabled":"")'>
+                <a asp-route-CurrentPage="@(Model.users.CurrentPage+1)" asp-route-FilterText="@Model.users.FilterText" asp-route-Sorting="@Model.users.Sorting" class="page-link">
+                    <i class="fa fa-step-forward"></i>
+                </a>
+            </li>
+            <li class='page-item @(!Model.users.ShowLast?"disabled":"")'>
+                 <a asp-route-CurrentPage="@Model.users.TotalPages" asp-route-FilterText="@Model.users.FilterText" asp-route-Sorting="@Model.users.Sorting" class="page-link">
+                     <i class="fa fa-fast-forward"></i>
+                 </a>
+            </li>
+        </ul>
+    </div>
+@* 分頁區 *@
+
+
+@section Scripts{
+    <script src="~/js/CustomScript.js" asp-asp-append-version="true"></script>
+}

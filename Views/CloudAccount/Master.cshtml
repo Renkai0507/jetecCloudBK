@@ -1,0 +1,179 @@
+﻿@using BkServer.Dtos;
+@model PagedResultDto<CustMast>
+ 
+@{
+    ViewData["Title"] = "Home Page";   
+    
+}
+
+<div>
+    <div class="text-center">
+        <h2>JoinCloud帳號管理</h2>
+        <form asp-action="Master"   method="get">
+            <div class="form-actions no-color">
+                <input type="hidden" name="CurrentPage"value="@Model.CurrentPage" />
+                <input type="hidden" name="Sorting"value="@Model.Sorting" />
+                <p>                    
+                    <input type="text" name="FilterText"value="@Model.FilterText"/>
+                    <input type="submit" name="Sorting"value="查詢"/>
+                    <a asp-action="Master">返回所有列表</a>
+                </p>
+            </div>
+        </form>
+        @if (User.IsInRole("管理者"))
+        {
+        <span class="text-right"><a class="btn btn-primary" asp-controller="CloudAccount" asp-action="CreateCloud">創建帳號</a></span>
+        }
+
+        <br><br>
+    </div>
+    
+    <table class="table table-bordered table-striped">
+        <thread>
+
+                @{
+                    var sortcid=ViewBag.sortId;
+                    var sortgroup=ViewBag.sortgroup==null?"group":ViewBag.sortgroup;
+                    var sorttype=ViewBag.sorttype==null?"type":ViewBag.sorttype;
+                    var sortenddate=ViewBag.sortenddate==null?"enddate":ViewBag.sortenddate;
+                    var sortproxy=ViewBag.sortproxy==null?"proxy":ViewBag.sortproxy;
+                }
+            <tr>
+                <th scope="col" class="sort-link">
+                    <a asp-action="Master" asp-route-Sorting="@sortcid"asp-route-CurrentPage="@Model.CurrentPage" asp-route-FilterText="@Model.FilterText">
+                        企業ID
+                    </a>
+                </th>
+                <th scope="col" class="sort-link">
+                    <a asp-action="Master" asp-route-Sorting="@sortgroup"asp-route-CurrentPage="@Model.CurrentPage" asp-route-FilterText="@Model.FilterText" >公司</a>
+                </th>
+                <th scope="col" class="sort-link">
+                    <a asp-action="Master" asp-route-Sorting="@sorttype"asp-route-CurrentPage="@Model.CurrentPage" asp-route-FilterText="@Model.FilterText">狀態</a>
+                    </th>
+                <th scope="col">合約日期</th>                
+                <th scope="col">續約日期</th>
+                <th scope="col" class="sort-link">
+                    <a asp-action="Master" asp-route-Sorting="@sortenddate" asp-route-CurrentPage="@Model.CurrentPage" asp-route-FilterText="@Model.FilterText">到期日期</a>
+                </th>
+                <th scope="col"><a asp-action="Master" asp-route-Sorting="@sortproxy" asp-route-CurrentPage="@Model.CurrentPage" asp-route-FilterText="@Model.FilterText">代理</a></th>
+                <th scope="col">操作</th>
+            </tr>
+        </thread>
+        <tbody>
+            @foreach (var Cust in Model.Data)
+            {
+              @if (User.IsInRole("管理者")||User.IsInRole("業務"))
+              {
+                <tr>                     
+                    <th scope="row">@Cust.Cid</th>
+                    <td>@Cust.Group</td>
+                    <td>@Cust.Allowstatus</td>
+                    <td>@Cust.Registdate</td> 
+                              
+                    <td > @Cust.Renew</td> 
+                    <td > @Cust.Enddate</td> 
+                    @{
+                        string proxy="";
+                        if(Cust.ProxyId!=0)
+                        {
+                            List<ProxyCompany> list=ViewBag.proxycoms;
+                         proxy= (from abc in list where abc.Id==Cust.ProxyId select abc.CompanyName).First().ToString();
+                        }
+                        
+                    }
+                    <td>@proxy </td>
+                    <td >
+                       <div class="flex-row d-flex ">
+                        <a method="POST"asp-controller="CloudAccount"  asp-action="Details" asp-route-Id="@Cust.Cid" class="btn btn-primary">                       
+                             查看內容
+                        </a>
+                        
+                         @* <a asp-action="DeleteData" asp-route-id="@Cust.Cid" class="btn btn-danger"onclick="return confirm('確定要刪除嗎?')">刪除資料</a> *@
+                         </div>
+                    </td>                    
+                </tr>
+              }else if (User.IsInRole("代理"))
+              {
+                  if(User.FindFirst("ProxyId").Value.Equals(Cust.ProxyId.ToString()))
+                  {
+                    <tr>                     
+                         <th scope="row">@Cust.Cid</th>
+                         <td>@Cust.Group</td>
+                         <td>@Cust.Allowstatus</td>
+                         <td>@Cust.Registdate</td> 
+
+                         <td > @Cust.Renew</td> 
+                         <td > @Cust.Enddate</td> 
+                         @{
+                             string proxy="";
+                             if(Cust.ProxyId!=0)
+                             {
+                                 List<ProxyCompany> list=ViewBag.proxycoms;
+                              proxy= (from abc in list where abc.Id==Cust.ProxyId select abc.CompanyName).First().ToString();
+                             }
+                        
+                          }
+                         <td>@proxy </td>
+                         <td >
+                            <div class="flex-row d-flex">
+                             <a method="POST"asp-controller="CloudAccount"  asp-action="Details" asp-route-Id="@Cust.Cid">                       
+                                  查看內容
+                             </a>
+                              </div>
+                         </td>                    
+                    </tr>
+                  }
+               
+
+              }else
+              {
+
+              }
+            }
+        </tbody>
+    </table>
+</div>
+
+
+
+
+
+
+
+
+@* 分頁區 *@
+    <div>
+        <ul class="pagination">
+            <li class='page-item @(!Model.ShowFirst?"disabled":"")'>
+                <a asp-route-CurrentPage="1" asp-route-FilterText="@Model.FilterText" asp-route-Sorting="@Model.Sorting"class="page-link">
+                    <i class="fa fa-fast-backward"></i>
+                </a>
+            </li>
+            <li class='page-item @(!Model.ShowPrevious?"disabled":"")'>
+                <a asp-route-CurrentPage="@(Model.CurrentPage-1)" asp-route-FilterText="@Model.FilterText" asp-route-Sorting="@Model.Sorting" class="page-link">
+                    <i class="fa fa-step-backward"></i>
+                </a>
+
+            </li>
+            @for (var i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class='page-item @(i==Model.CurrentPage?"active":"")'>
+                    <a asp-route-CurrentPage="@i" asp-route-FilterText="@Model.FilterText" asp-route-Sorting="@Model.Sorting" class="page-link">@i</a>
+                </li>
+            }
+            <li class='page-item @(!Model.ShowNext?"disabled":"")'>
+                <a asp-route-CurrentPage="@(Model.CurrentPage+1)" asp-route-FilterText="@Model.FilterText" asp-route-Sorting="@Model.Sorting" class="page-link">
+                    <i class="fa fa-step-forward"></i>
+                </a>
+            </li>
+            <li class='page-item @(!Model.ShowLast?"disabled":"")'>
+                 <a asp-route-CurrentPage="@Model.TotalPages" asp-route-FilterText="@Model.FilterText" asp-route-Sorting="@Model.Sorting" class="page-link">
+                     <i class="fa fa-fast-forward"></i>
+                 </a>
+            </li>
+        </ul>
+    </div>
+@* 分頁區 *@
+@section Scripts{
+    <script src="~/js/CustomScript.js" asp-asp-append-version="true"></script>
+}

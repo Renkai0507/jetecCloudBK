@@ -1,0 +1,198 @@
+﻿@using BkServer.ViewModels
+@model BkServer.ViewModels.CustDetailVM
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h2 class="display-3">@Model.cust.Group</h1>    
+</div>
+
+<div class="row justify-content-center m-8">
+    <div class="col-sm-6">
+     
+        <div class="card">
+            <div class="card-header">
+              <ul class="nav nav-tabs" id="myTab" role="tablist">
+                  <li class="nav-item">
+                    <a class="nav-link active"  data-toggle="pill" href="#company" role="tab" aria-controls="home" aria-selected="true">公司訊息</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" id="pills-device-tab" data-toggle="pill" href="#device" role="tab" aria-controls="pills-device" aria-selected="false">裝置</a>
+                  </li>
+                   <li class="nav-item">
+                      <a class="nav-link" asp-route-Id="@Model.cust.Cid" asp-action="record" >警報紀錄</a>
+                   </li>                
+                </ul>
+            </div>
+
+            <div class="card-body text-center tab-content">
+                <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                  <h4>企業ID:@Model.cust.Cid</h4>
+                  <h4>開通日期:@Model.cust.Registdate</h4>
+                  <h4>到期日期:@Model.cust.Enddate</h4>
+                  <h4>@{var Function=Model.cust.Function.Equals("BCLER")?"進階型":"基本型";} 功能:@Function </h4>
+                </div>
+                <div class="tab-pane fade" id="device" role="tabpanel" aria-labelledby="pills-profile-tab">
+                  <h4>使用帳號數: @Model.AccountCnt</h4>
+                  <h4>警報Email數: @Model.EmailCnt </h4>
+                  <h4>Line警報設置: @Model.Lineset </h4>
+                </div>
+              
+                
+                @* 設定代理公司區 *@
+            @*@if (User.IsInRole("管理者"))
+            {      
+                <select style="width: 150px;" asp-for="cust.ProxyId" class="custom-select mr-sm-1 btn-sm" asp-items="Model.proxycom"></select>
+            }else
+            {
+                if(Model.cust.ProxyId!=0)
+                {  
+                   string proxy="";
+                   List<ProxyCompany> list=ViewBag.proxycoms;
+                   proxy= (from abc in list where abc.Id==Model.cust.ProxyId select abc.CompanyName).First().ToString();
+                   <h4>代理公司:@proxy</h4>
+                }                  
+            } *@
+
+            </div>
+            <div class="card-footer text-center">
+                <a asp-action="Master" asp-controller="CloudAccount" class="btn btn-info">返回</a>
+                @if (User.IsInRole("管理者"))
+                {
+                    <a  class="btn btn-info" 
+                    data-toggle="collapse" href="#renew" role="button" aria-expanded="false" aria-controls="renew">續約</a>
+              
+                }            
+                  <a  class="btn btn-info" 
+                    data-toggle="collapse" href="#sensortable" role="button" aria-expanded="false" aria-controls="sensortable">裝置資訊</a>
+            </div>
+        </div>
+            <div class="collapse" id="renew">
+                <div class="card card-body">
+                    <form>
+                        <div asp-validation-summary="All" class="text-danger"> </div>
+                        <h4>請選擇續約方案</h4>
+                         <div class="form-row">
+                           <div class="form-group col-md-4">
+                             
+                              <label >到期日期</label>
+                              
+                              <input name="Enddate" Id="Enddate" type="date"asp-for="Enddate" class="form-control border"/>
+                              <span asp-validation-for="Enddate" class="text-danger"></span>
+                    
+                
+                            </div>
+                           <div class="form-group col-md-4">
+                                <label asp-for="CustFuncion"></label>                              
+                                <select style="width: 150px;" asp-for="CustFuncion" class="custom-select mr-sm-1 btn-sm" asp-items="Html.GetEnumSelectList<BkServer.ViewModels.FunctionEnum>()">
+                                    
+                                </select>
+                                <span  class="text-danger"></span>
+                           </div>
+                           <div class=" col-md-4">
+                                
+                               <a onclick="return confirm('確定要送出嗎?')" style="margin-top: 31px;" asp-action="Renew" asp-controller="CloudAccount"asp-route-Id="@Model.cust.Cid" class="btn btn-info">確認</a>
+                           </div>
+                         </div>
+                     </form>
+                </div>
+            </div>
+        </div>
+    </div>
+        <div class="collapse" id="sensortable">
+            
+             <table class="table table-bordered table-striped">
+                  <thread>
+                      <tr>
+                          <th scope="col">裝置ID</th>
+                          <th scope="col">裝置名稱</th>
+                          <th scope="col">裝置類型</th>
+                          <th scope="col">類型名稱</th>                
+                          <th scope="col">更新日期</th>
+                          <th scope="col">更新時間</th>
+                          <th scope="col">清除資料</th>
+                          
+                      </tr>
+                  </thread>
+                  <tbody>
+                        @foreach (var sensor in Model.sensors)
+                      {
+                      
+                          <tr>                     
+                              <th scope="row">@sensor.Sid</th>
+                              <td>@sensor.SName</td>
+                              <td>@sensor.Type</td>
+                              <td>@sensor.Typename</td>
+                              <td>@sensor.SendDate</td> 
+                              <td>@sensor.SendTime</td>   
+                              <td><a asp-action="DeleteData" asp-route-sid="@sensor.Sid" asp-route-cid="@sensor.Cid" class="btn btn-danger"onclick="return confirm('確定要刪除嗎?')">刪除資料</a></td>                                           
+                          </tr>
+                        }
+                  </tbody>
+             </table>            
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        @* else if (User.IsInRole("業務"))
+        {
+               <div class="card">
+            <div class="card-header">
+                <h1>公司訊息</h1>
+            </div>
+
+            <div class="card-body text-center">
+                <h4>企業ID:@Model.cust.Cid</h4>
+                <h4>開通日期:@Model.cust.Registdate</h4>
+                <h4>到期日期:@Model.cust.Enddate</h4>               
+                <h4>@{var Function=Model.cust.Function.Equals("BCLER")?"進階型":"基本型";} 功能:@Function </h4>
+            </div>
+            <div class="card-footer text-center">
+                <a asp-action="Master" asp-controller="CloudAccount" class="btn btn-info">返回</a>
+            </div>
+
+        </div>
+        }else if(User.IsInRole("代理"))
+        {
+            if(Model.cust.ProxyId==int.Parse(User.FindFirst("ProxyId").Value))
+            {
+                       <div class="card">
+            <div class="card-header">
+                <h1>公司訊息</h1>
+            </div>
+
+            <div class="card-body text-center">
+                <h4>企業ID:@Model.cust.Cid</h4>
+                <h4>開通日期:@Model.cust.Registdate</h4>
+                <h4>到期日期:@Model.cust.Enddate</h4>               
+                <h4>@{var Function=Model.cust.Function.Equals("BCLER")?"進階型":"基本型";} 功能:@Function </h4>
+            </div>
+            <div class="card-footer text-center">
+                <a asp-action="Master" asp-controller="CloudAccount" class="btn btn-info">返回</a>
+            </div>
+
+        </div>
+            }
+        }else
+        {} *@
+     
+    
+</div>

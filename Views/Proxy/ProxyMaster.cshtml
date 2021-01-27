@@ -1,0 +1,50 @@
+﻿
+@using BkServer.ViewModels
+@model ProxyMasterVM
+ 
+@{
+    ViewData["Title"] = "Home Page";   
+    
+}
+<div>
+    <div class="text-center">
+        <h2>JoinCloud代理商管理</h2>
+        @if (User.IsInRole("管理者"))
+        {
+        <span class="text-right"><a class="btn btn-primary" asp-controller="Proxy" asp-action="CreateProxy">新增代理商</a></span>
+        }
+        <br><br>
+    </div>
+    
+    <table class="table table-bordered table-striped">
+        <thread>
+            <tr>                
+                <th scope="col">公司</th>                
+                @* <th scope="col">操作</th> *@
+            </tr>
+        </thread>
+        <tbody>
+            @foreach (var com in Model.proxycompanies)
+            {
+              
+                <tr>
+                     
+                    <th scope="row">@com.CompanyName</th>
+                 
+                    @* <td >
+                       <div class="flex-row d-flex">
+                        <a method="POST"asp-controller="CloudAccount"  asp-action="Details" asp-route-Id="@com.Id">
+                             查看內容
+                        </a>
+                        </div>
+                    </td> *@
+                    
+                </tr>
+                
+            }
+        </tbody>
+    </table>
+</div>
+@section Scripts{
+    <script src="~/js/CustomScript.js" asp-asp-append-version="true"></script>
+}

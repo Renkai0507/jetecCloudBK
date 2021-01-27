@@ -1,0 +1,117 @@
+﻿@using BkServer.Dtos;
+@using BkServer.ViewModels
+@model recordVM
+ 
+@{
+    ViewData["Title"] = "Home Page";   
+ }
+
+<div>
+    <div class="text-center">
+        <h2>@Model.cid 警報紀錄</h2>
+        <form asp-action="Master"   method="get">
+            <div class="form-actions no-color">
+                <input type="hidden" name="CurrentPage"value="@Model.DataLogs.CurrentPage" />
+                <input type="hidden" name="Sorting"value="@Model.DataLogs.Sorting" />
+                <p>                    
+                    <input type="text" name="FilterText"value="@Model.DataLogs.FilterText"/>
+                    <input type="submit" name="Sorting"value="查詢"/>
+                    <a onclick="javascript:window.history.go(-1)">返回</a>
+                </p>
+            </div>
+        </form>
+        
+        <br><br>
+    </div>
+    
+    <table class="table table-bordered table-striped">
+        <thread>
+
+                @{
+                    var sortsid=ViewBag.sortsid;
+                    var sortsname=ViewBag.sortsname==null?"sname":ViewBag.sortgroup;
+                    var sorttext=ViewBag.sorttype==null?"text":ViewBag.sorttype;
+                    var sorttime=ViewBag.sortenddate==null?"time":ViewBag.sortenddate;
+                    
+                }
+            <tr>
+                <th scope="col" class="sort-link">
+                    <a asp-action="record" asp-route-Sorting="@sortsid"asp-route-CurrentPage="@Model.DataLogs.CurrentPage" asp-route-FilterText="@Model.DataLogs.FilterText">
+                        SensorID
+                    </a>
+                </th>
+                <th scope="col" class="sort-link">
+                    <a asp-action="record" asp-route-Sorting="@sortsname"asp-route-CurrentPage="@Model.DataLogs.CurrentPage" asp-route-FilterText="@Model.DataLogs.FilterText" >裝置名稱</a>
+                </th>
+                <th scope="col" class="sort-link">
+                    <a asp-action="record" asp-route-Sorting="@sorttext"asp-route-CurrentPage="@Model.DataLogs.CurrentPage" asp-route-FilterText="@Model.DataLogs.FilterText">警告訊息</a>
+                </th>
+                
+                <th scope="col" class="sort-link">
+                    <a asp-action="record" asp-route-Sorting="@sorttime" asp-route-CurrentPage="@Model.DataLogs.CurrentPage" asp-route-FilterText="@Model.DataLogs.FilterText">警報時間</a>
+                </th>
+              
+            </tr>
+        </thread>
+        <tbody>
+            @foreach (var log in Model.DataLogs.Data)
+            {            
+                <tr>                     
+                    <th scope="row">@log.Sid</th>
+                    <td>@log.Sname</td>
+                    <td>@log.Textlog</td>
+                    <td>@log.Alarmtime</td> 
+                              
+                  
+                                      
+                </tr>
+            }
+           
+            
+        </tbody>
+    </table>
+</div>
+
+
+
+
+
+
+
+
+@* 分頁區 *@
+    <div>
+        <ul class="pagination">
+            <li class='page-item @(!Model.DataLogs.ShowFirst?"disabled":"")'>
+                <a asp-route-CurrentPage="1" asp-route-FilterText="@Model.DataLogs.FilterText" asp-route-Sorting="@Model.DataLogs.Sorting"class="page-link">
+                    <i class="fa fa-fast-backward"></i>
+                </a>
+            </li>
+            <li class='page-item @(!Model.DataLogs.ShowPrevious?"disabled":"")'>
+                <a asp-route-CurrentPage="@(Model.DataLogs.CurrentPage-1)" asp-route-FilterText="@Model.DataLogs.FilterText" asp-route-Sorting="@Model.DataLogs.Sorting" class="page-link">
+                    <i class="fa fa-step-backward"></i>
+                </a>
+
+            </li>
+            @for (var i = 1; i <= Model.DataLogs.TotalPages; i++)
+            {
+                <li class='page-item @(i==Model.DataLogs.CurrentPage?"active":"")'>
+                    <a asp-route-CurrentPage="@i" asp-route-FilterText="@Model.DataLogs.FilterText" asp-route-Sorting="@Model.DataLogs.Sorting" class="page-link">@i</a>
+                </li>
+            }
+            <li class='page-item @(!Model.DataLogs.ShowNext?"disabled":"")'>
+                <a asp-route-CurrentPage="@(Model.DataLogs.CurrentPage+1)" asp-route-FilterText="@Model.DataLogs.FilterText" asp-route-Sorting="@Model.DataLogs.Sorting" class="page-link">
+                    <i class="fa fa-step-forward"></i>
+                </a>
+            </li>
+            <li class='page-item @(!Model.DataLogs.ShowLast?"disabled":"")'>
+                 <a asp-route-CurrentPage="@Model.DataLogs.TotalPages" asp-route-FilterText="@Model.DataLogs.FilterText" asp-route-Sorting="@Model.DataLogs.Sorting" class="page-link">
+                     <i class="fa fa-fast-forward"></i>
+                 </a>
+            </li>
+        </ul>
+    </div>
+@* 分頁區 *@
+@section Scripts{
+    <script src="~/js/CustomScript.js" asp-asp-append-version="true"></script>
+}

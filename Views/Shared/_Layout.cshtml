@@ -1,0 +1,163 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - BkServer</title>
+    <link rel="stylesheet" href="~/sidbar/css/style.css">
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+
+
+    
+
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900" rel="stylesheet">
+		
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+		<link rel="stylesheet" href="~/sidbar/css/style.css">
+    
+
+
+</head>
+<body>
+
+
+<div class="wrapper d-flex align-items-stretch">
+
+			<nav id="sidebar">
+				<div class="custom-menu">
+					<button type="button" id="sidebarCollapse" class="btn btn-primary">
+	        </button>
+        </div>
+	  		<div class="img bg-wrap text-center py-4" style="background-image: url(/img/bg_1.jpg);">
+	  			<div class="user-logo">
+	  				<div class="img" style="background-image: url(/img/JLOGO.png);"></div>
+	  				<h3>久德雲端管理</h3>
+	  			</div>
+	  		</div>
+         <ul class="list-unstyled components mb-5">
+          
+                  
+
+                   <li class="active">
+                     <a  asp-area="" asp-controller="Home" asp-action="Index"><span class="fa fa-Home mr-3 notif"><span class="fa fa-home mr-3">
+                     </span>首頁</a>
+                   </li>
+              @if (User.IsInRole("管理者"))
+              {
+                     <li>
+                      <a  asp-area="" asp-controller="Manager" asp-action="Index"><span class="fa fa-trophy mr-3 notif">
+                       
+                        
+                        
+                     </span>管理人員 </a>
+                   </li>
+              }
+              @if(User.IsInRole("管理者")||User.IsInRole("業務"))
+              {
+                   <li>
+                      <a  asp-area="" asp-controller="Proxy" asp-action="ProxyMaster"><span class="fa fa-handshake-o mr-3">
+                     </span> 代理公司</a>
+                   </li>
+                    <li>
+                      <a  asp-area="" asp-controller="CloudAccount" asp-action="Master"><span class="fa fa-cloud mr-3">
+                     </span> 雲端帳號</a>
+                   </li>                  
+              }
+              @if (User.IsInRole("代理"))
+              {
+                    <li>
+                      <a  asp-area="" asp-controller="CloudAccount" asp-action="Master"><span class="fa fa-cloud mr-3">
+                     </span> 雲端帳號</a>
+                   </li>      
+              }
+              @if(User.Identity.IsAuthenticated)
+              {
+                  
+                   <li>
+                     <a asp-area="" asp-controller="User" asp-action="Logout"><span class="fa fa-sign-out mr-3"></span> 登出</a>
+                   </li>
+                
+              }
+           
+       
+                  </ul>
+    	</nav>
+
+
+
+
+
+
+
+<div id="content" class="bg-light" >
+
+
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">久德雲端管理</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+                           
+                      
+                        @if(User.Identity.IsAuthenticated)
+                        {
+
+                        }else
+                        {
+                         <form asp-action="Login" asp-controller="User" method="post">
+                           <ul  class="navbar-nav flex-grow-1 justify-content-end">      
+                           <li class="nav-item">
+                             <input type="text" id="user_id" name="user_id" placeholder="User Name"  >
+                           </li>
+                           <li class="nav-item">
+                             <input  type="password" id="Pwd" name="Pwd"   placeholder="Password">
+                           </li>
+                       
+                           <li class="nav-item">
+                             請<input type="submit" class="ml-md-auto btn btn-primary"                                  
+                                target="_top" value="登入">  
+                           </li>                             
+                         </form>
+                         <li class="nav-item">
+                            或<a class="ml-md-auto btn btn-primary" asp-area="" asp-controller="User" asp-action="Register">註冊</a>帳號
+                        </li>
+                        }                  
+                        
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    @* <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2020 - BkServer - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer> *@
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @RenderSection("Scripts", required: false)
+</div>
+</div>
+    @* <script src="~/sidbar/js/jquery.min.js"></script> *@
+    <script src="~/sidbar/js/popper.js"></script>
+    <script src="~/sidbar/js/bootstrap.min.js"></script>
+    <script src="~/sidbar/js/main.js"></script>
+</body>
+</html>
