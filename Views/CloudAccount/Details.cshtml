@@ -111,7 +111,11 @@
                           <th scope="col">類型名稱</th>                
                           <th scope="col">更新日期</th>
                           <th scope="col">更新時間</th>
-                          <th scope="col">清除資料</th>
+                          @if(User.IsInRole("管理者"))
+                          {
+                              <th scope="col">清除資料</th>
+                          }
+                          
                           
                       </tr>
                   </thread>
@@ -126,7 +130,12 @@
                               <td>@sensor.Typename</td>
                               <td>@sensor.SendDate</td> 
                               <td>@sensor.SendTime</td>   
-                              <td><a asp-action="DeleteData" asp-route-sid="@sensor.Sid" asp-route-cid="@sensor.Cid" class="btn btn-danger"onclick="return confirm('確定要刪除嗎?')">刪除資料</a></td>                                           
+                            @if(User.IsInRole("管理者"))
+                            {
+                            <td><a asp-action="DeleteData" asp-route-sid="@sensor.Sid" asp-route-cid="@sensor.Cid" class="btn btn-danger"onclick="return confirm('確定要刪除嗎?')">刪除資料</a></td>                                           
+                            }
+                              
+
                           </tr>
                         }
                   </tbody>
