@@ -20,7 +20,7 @@ namespace BkServer
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseUrls("http://joinsystem.jetec.com.tw:2028/");
+                    webBuilder.UseUrls("http://joinsystem.jetec.com.tw:5000/");
                     webBuilder.UseStartup<Startup>();
                 });
     }

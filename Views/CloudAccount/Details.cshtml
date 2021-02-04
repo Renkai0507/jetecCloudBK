@@ -102,7 +102,7 @@
     </div>
         <div class="collapse" id="sensortable">
             
-             <table class="table table-bordered table-striped">
+             <table class="table table-bordered table-striped table-hover">
                   <thread>
                       <tr>
                           <th scope="col">裝置ID</th>
@@ -116,11 +116,10 @@
                               <th scope="col">清除資料</th>
                           }
                           
-                          
                       </tr>
                   </thread>
                   <tbody>
-                        @foreach (var sensor in Model.sensors)
+                       @foreach (var sensor in Model.sensors)
                       {
                       
                           <tr>                     
@@ -138,6 +137,18 @@
 
                           </tr>
                         }
+                      @foreach (var Device in Model.Devicese)
+                      {
+                          <tr>
+                              <th scope="row">@Device.Sid</th>
+                              <td>@Device.Mname</td>
+                              <td>@Device.Rowcnt 排大型顯示器</td>
+                              <td>綁定裝置: @Device.Display</td>
+                              @{DateTime date = DateTime.Parse(Device.Showtime);  }
+                              <td>@date.ToString("yyyy/MM/dd")</td>
+                              <td>@date.ToString("HH:mm:ss")</td>
+                          </tr>
+                      }
                   </tbody>
              </table>            
         </div>

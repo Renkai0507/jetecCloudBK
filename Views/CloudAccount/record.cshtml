@@ -16,15 +16,17 @@
                 <p>                    
                     <input type="text" name="FilterText"value="@Model.DataLogs.FilterText"/>
                     <input type="submit" name="Sorting"value="查詢"/>
-                    <a href="" onclick="javascript:window.history.go(-1)">返回</a>
+                     @{var idstr= ViewContext.RouteData.Values["Id"];}
+                    <a   asp-action="Details" asp-route-Id=@idstr>返回</a>
                 </p>
             </div>
         </form>
+       
         
         <br><br>
     </div>
     
-    <table class="table table-bordered table-striped">
+    <table class="table table-bordered table-striped table-hover">
         <thread>
 
                 @{

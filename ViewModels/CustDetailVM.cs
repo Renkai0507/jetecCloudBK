@@ -17,7 +17,7 @@ namespace BkServer.ViewModels
 
         public string Lineset{set;get;}
         public IEnumerable<DeviceShow> Devicese{set;get;}
-
+        
         public IEnumerable<RemoteAlarmRecent> sensors{set;get;}
         public CustLinekey custline{set;get;}
 
