@@ -63,6 +63,7 @@ namespace BkServer
             {
                  options.JsonSerializerOptions.PropertyNamingPolicy = null;
             });
+            
             // services.AddControllersWithViews(options=>{ options.ModelBindingMessageProvider.SetValueMustNotBeNullAccessor(
             // _ => "The field is required.");});
            
@@ -81,6 +82,7 @@ namespace BkServer
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+            
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             #region 指定要使用 Cookie & 使用者認證的中介軟體

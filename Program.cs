@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
@@ -18,10 +19,14 @@ namespace BkServer
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
+                .UseWindowsService()
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseUrls("http://joinsystem.jetec.com.tw:5000/");
+                    webBuilder.UseContentRoot(AppContext.BaseDirectory);
+                    webBuilder.UseUrls("http://joinsystem.jetec.com.tw:2028/");
                     webBuilder.UseStartup<Startup>();
-                });
+                    
+                }).UseContentRoot(AppContext.BaseDirectory)
+                ;
     }
 }
